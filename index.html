@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image selection activity</title>
+    <script defer src="js/script.js"></script>
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="isf_container">
+        <div class="header_and_logo">
+            <h1>Image selection activity</h1>
+            <img src="img/logo.svg" class="logo" alt="holmesglen logo">
+        </div>
+                    <p class="instruction_text"></p>
+
+        <div id="images_and_feedback">
+            <div id="image_container">
+                <!-- Image elements will be dynamically added here -->
+            </div>
+            <div id="feedback_and_next_btn">
+            <div class="feedback_container">
+                <div class="correct_or_incorrect">
+    
+                </div>
+                    <div class="feedback_pane">
+                        <div class="extra_feedback">
+            
+                        </div>
+                    </div>
+                    <!-- Feedback (Correct/Incorrect) will be displayed here -->
+                </div>
+                <button id="next-button">Next</button> <!-- Initially hidden -->
+                </div>
+        </div>
+        <div id="overlay">
+            <div class="popup_container">
+                <img class="popup">
+                <button class="close_popup" tabindex="0">&times;</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
