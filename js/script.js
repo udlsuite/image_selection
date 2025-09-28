@@ -186,6 +186,7 @@ nextButton.addEventListener('click', () => {
   if (currentSetIndex < imageSets.length) loadImageSet(currentSetIndex);
 });
 
+<<<<<<< HEAD
 backButton.addEventListener('click', () => {
   currentSetIndex--;
   if (currentSetIndex >= 0) loadImageSet(currentSetIndex);
@@ -197,4 +198,7 @@ overlay.addEventListener('click', function (event) {
 });
 
 //Load first set of images initially
+=======
+// Initially load the first set of images
+>>>>>>> 7b5b031db881206ac05f4e6e04f660d495af2f9d
 loadImageSet(currentSetIndex);
