@@ -4,7 +4,7 @@ const imageSets = [
     ['img/01.jpg', false, "<b>Try again.</b><br> While this image shows gender diversity, there is little representation of other types of diversity. Consider a different option.", "Option A", "A group of five people gathered around a table, examining a tablet together, engaged in discussion."], // First image (incorrect)
     ['img/02.jpg', false, "<b>Try again.</b><br> While this image shows gender diversity, there is little representation of other diversities. This image <b>does</b> fit the context of a business environment. Consider a different option.", "Option B", "Team of business individuals seated at a table in an office"],  // Second image (correct)
     ['img/03.jpg', false, "<b>Try again.</b><br> While this image shows cultural diversity, there is little representation of other diversities. This image <b>does not</b> fit the context of a business environment. Consider a different option.", "Option C", "For female co workers stand together smiling by a wall. One is holding a laptop, another is holding a takeaway coffee and another is holding a notepad."], // Third image (incorrect)
-    ['img/04.jpg', true, "<b>Well done.</b><br> While this image shows cultural and gender diversity. This image <b>does</b> fit the context of a business environment. ", "Option D", "A diverse group of business professionals collaborating in a modern office setting."],  // Fourth image (correct)
+    ['img/04.jpg', true, "<b>Well done.</b><br> This image shows cultural and gender diversity. This image <b>does</b> fit the context of a business environment. ", "Option D", "A diverse group of business professionals collaborating in a modern office setting."],  // Fourth image (correct)
   ],
   [
     ['img/07.jpg', false, "<b>Try again.</b><br> This image <b>does not</b> challenge gender stereotypes.", "Option A", "A group of men in safety vests and hard hats gathered around scaffolding at a construction site."],
@@ -23,92 +23,86 @@ const imageSets = [
     ['img/18.jpg', false, "<b>Try again.</b><br> This image lacks aspects of diversity, including age, racial and cultural diversity.", "Option B", "A group of construction workers poses in front of a building under construction, wearing hard hats and safety vests."],
     ['img/19.jpg', true, "<b>Well done.</b><br> This image shows age, gender, and racial diversity in the construction industry.", "Option C", "Two men and a woman in hard hats and vests, gathered around a construction site, reviewing a large safety plan together."],
   ],
-    [
+  [
     ['img/20.jpg', false, "<b>Try again.</b><br>This image lacks diversity and <b>does not</b> represent an inclusive education environment.", "Option A", "A diverse group of people engaged in a discussion in a classroom setting, seated at desks with learning materials."],
-    ['img/21.jpg', true, "<b>Try again.</b><br>This image lacks diversity and <b>does not</b> represent an inclusive education environment.","Option B", "A woman stands in front of a classroom, with some students seated at desks behind her."],
-    ['img/24.jpg', false, "<b>Well done.</b><br>This image represents multiple aspects of diversity, including age, gender and race.", "Option C", "A female teacher stands in front of a classroom, with some students seated at desks behind her."],
-    ['img/23.jpg', false,"<b>Try again.</b><br> While this image shows gender diversity, there is little representation of other diversities.",  "Option D", "A diverse group of individuals sitting at desks in a classroom."],
+    ['img/21.jpg', false, "<b>Try again.</b><br>This image lacks diversity and <b>does not</b> represent an inclusive education environment.", "Option B", "A woman stands in front of a classroom, with some students seated at desks behind her."],
+    ['img/24.jpg', true, "<b>Well done.</b><br>This image represents multiple aspects of diversity, including age, gender and race.", "Option C", "A female teacher stands in front of a classroom, with some students seated at desks behind her."],
+    ['img/23.jpg', false, "<b>Try again.</b><br> While this image shows gender diversity, there is little representation of other diversities.", "Option D", "A diverse group of individuals sitting at desks in a classroom."],
   ],
-
 ];
 
-
 const instructTexts = [
-  "Out of these four images, select the image that best represents diversity in a business environment.", 
+  "Out of these four images, select the image that best represents diversity in a business environment.",
   "You're teaching a course in a construction industry field where women are underrepresented. Which image would best challenge gender stereotypes?",
   "Which of these images would you <b>avoid</b> using from a diversity perspective?",
   "Out of these three images, select the image that best represents diversity in the construction industry.",
-"The four following images were generated using AI, with the prompt 'A teacher standing in a classroom full of students'. Select the image that best represents diversity in a classroom environment."];
+  "The four following images were generated using AI, with the prompt 'A teacher standing in a classroom full of students'. Select the image that best represents diversity in a learning environment."];
 
+const overallCorrectness = []; // populated based on selections for each set { id: "img_set_1_img_3", isCorrect: false, feedback: "..." }
 
-let currentSetIndex = 0; // Set initial page load to first set of images 
+let currentSetIndex = 0; // Start on the first set of images
 
-//Variables
+// Variables
 const container = document.getElementById('image_container');
 const nextButton = document.getElementById('next-button');
+const backButton = document.getElementById('back-button');
 const correctness = document.querySelector('.correct_or_incorrect');
 const feedbackText = document.querySelector('.extra_feedback');
 const feedbackPane = document.querySelector(".feedback_pane");
 const feedbackContainer = document.querySelector(".feedback_container");
 const closePopup = document.querySelector('.close_popup');
 const instructText = document.querySelector('.instruction_text');
-let feedback;
+const overlay = document.getElementById('overlay');
+const popupImage = document.querySelector('.popup');
 
 function loadImageSet(setIndex) {
   const images = imageSets[setIndex];
+  console.log("Loading set:", currentSetIndex);
 
-  // Clear existing images in the container
+  // Clear container
   container.innerHTML = '';
 
   images.forEach((imageData, index) => {
-    const imageWrapper = document.createElement('div'); // Wrapper for image and text
+    const imageWrapper = document.createElement('div');
     imageWrapper.classList.add('image-wrapper');
+
     instructText.innerHTML = instructTexts[setIndex];
 
     const img = document.createElement('img');
-    img.src = imageData[0]; // Set image source
+    img.src = imageData[0];
     img.alt = `Image ${index + 1}`;
     img.title = `Image ${index + 1}`;
     img.classList.add('image-box');
-    img.setAttribute('tabindex', '0'); // Make image tabbable
+    img.id = `img_set_${setIndex + 1}_img_${index + 1}`;
+    img.setAttribute('tabindex', '0');
 
-    // Add click event listener
-    img.addEventListener('click', () => checkAnswer(imageData[1], img, imageData[2])); // Pass the feedback as an argument
-
-    // Add keydown event listener for Enter key
+    // Click / keyboard handlers
+    img.addEventListener('click', () => checkAnswer(imageData[1], img, imageData[2]));
     img.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        checkAnswer(imageData[1], img, imageData[2]); // Trigger checkAnswer if Enter is pressed
-      }
+      if (event.key === 'Enter') checkAnswer(imageData[1], img, imageData[2]);
     });
 
-    // Create caption div
+    // Caption
     const captionDiv = document.createElement('div');
     captionDiv.classList.add('caption');
-
-    // Create p tag
     const p = document.createElement('p');
-    p.textContent = imageData[3]; // Set the text from the array (e.g., "Option A")
+    p.textContent = imageData[3];
 
-    // Create enlarge icon image
+    // Enlarge icon
     const enlargeIcon = document.createElement('img');
     enlargeIcon.src = 'img/enlarge-icon-64px-1.png';
     enlargeIcon.alt = 'Enlarge Image';
     enlargeIcon.classList.add('img_enlarge');
     enlargeIcon.setAttribute('tabindex', '0');
+    enlargeIcon.title = "Enlarge image";
 
-    // Append elements
     captionDiv.appendChild(p);
     captionDiv.appendChild(enlargeIcon);
+    imageWrapper.appendChild(img);
+    imageWrapper.appendChild(captionDiv);
+    container.appendChild(imageWrapper);
 
-    imageWrapper.appendChild(img); // Append image to wrapper
-    imageWrapper.appendChild(captionDiv); // Append caption div to wrapper
-    container.appendChild(imageWrapper); // Append wrapper to the container
-
-    const imageWrappers = document.querySelectorAll('.image-wrapper');
-    const overlay = document.getElementById('overlay');
-    const popupImage = document.querySelector('.popup');
-
+    // Enlarge handlers
     function handleImageEnlarge(event) {
       if (event.type === 'click' || event.key === 'Enter' || event.key === ' ') {
         const imgToEnlarge = event.currentTarget.closest('.image-wrapper').querySelector('img').src;
@@ -122,89 +116,85 @@ function loadImageSet(setIndex) {
       }
     }
 
-    imageWrappers.forEach(wrapper => {
-      const enlargeIcon = wrapper.querySelector('.img_enlarge');
-      enlargeIcon.addEventListener('click', handleImageEnlarge);
-      enlargeIcon.addEventListener('keydown', handleImageEnlarge);
-    });
+    enlargeIcon.addEventListener('click', handleImageEnlarge);
+    enlargeIcon.addEventListener('keydown', handleImageEnlarge);
 
-    // Close the overlay and popup when the overlay is clicked
     closePopup.addEventListener('click', function () {
       overlay.style.display = 'none';
       img.setAttribute('tabindex', '0');
       enlargeIcon.setAttribute('tabindex', '0');
     });
   });
-}
 
-// Show the "Next" button after each set in answered, unless its the last set
-function showNextButton() {
-  nextButton.style.display = 'block';
-  // Hide the Next button if this is the final set
-  if (currentSetIndex === imageSets.length - 1) {
-    nextButton.style.display = 'none';
-  }
-}
+  // Back button visibility
+  backButton.disabled = currentSetIndex === 0 ? true : false;
 
-// Hide the "Next" button after clicking it and load the next set of images
-nextButton.addEventListener('click', () => {
-  feedbackContainer.classList.remove("fade");
-  currentSetIndex++;
-  if (currentSetIndex < imageSets.length) {
-    loadImageSet(currentSetIndex);
-    nextButton.style.display = 'none'; // Hide the Next button again
-    correctness.innerHTML = ''; // Clear feedback when loading next set
-    feedbackText.innerHTML = '';
-  }
-});
+  // Next button visibility
+  nextButton.disabled = currentSetIndex === imageSets.length - 1 ? true : false;
 
-// Function to check the answer
-function checkAnswer(isCorrect, selectedImg, feedbackMessage) {
-  const imgs = document.querySelectorAll('.image-box');
+  // Restore previous selection if exists
+  if (overallCorrectness[currentSetIndex]) {
+    const saved = overallCorrectness[currentSetIndex];
+    const thisQ = document.querySelector(`#${saved.id}`);
+    if (thisQ) thisQ.classList.add("selected");
 
-  // Remove existing classes
-  imgs.forEach(img => {
-    img.classList.remove('selected');
-  });
-
-  if (isCorrect) {
-    // Wait for fade-out to finish, then center the correct image
-    setTimeout(() => {
-      selectedImg.removeAttribute('tabindex');
-      selectedImg.classList.add('selected');
-      showNextButton(); // Show the "Next" button after correct answer
-    }, 300); // Wait for fade duration
+    feedbackText.innerHTML = saved.feedback;
+    correctness.innerHTML = saved.isCorrect
+      ? '<img src="img/trophy_icon.png" class="correctness_icon" alt="trophy icon">'
+      : '<img src="img/question_mark_icon.png" class="correctness_icon" alt="question mark icon">';
   } else {
-    selectedImg.classList.add('selected');
+    feedbackText.innerHTML = "";
+    correctness.innerHTML = "";
   }
+}
 
-  // Add animation to the feedback pane
+// Check answer function with correctess, selected img and feedback message as parameters 
+function checkAnswer(isCorrect, selectedImg, feedbackMessage) {
+    console.log(overallCorrectness)
+  const imgs = document.querySelectorAll('.image-box');
+  imgs.forEach(img => img.classList.remove('selected'));
+
+  // Save selection wether correct or not 
+  overallCorrectness[currentSetIndex] = {
+    id: selectedImg.id,
+    isCorrect: isCorrect,
+    feedback: feedbackMessage
+  };
+
+  selectedImg.classList.add('selected');
+
+  // Feedback
   feedbackPane.classList.remove("fade");
-  // feedbackContainer.classList.remove("fade");
   setTimeout(() => {
-    if (isCorrect) {
-      correctness.innerHTML = '<img src="img/trophy_icon.png" class="correctness_icon" alt="trophy icon">';
-    } else {
-      correctness.innerHTML = '<img src="img/question_mark_icon.png" class="correctness_icon" alt="question mark icon">';
-    }
+    correctness.innerHTML = isCorrect
+      ? '<img src="img/trophy_icon.png" class="correctness_icon" alt="trophy icon">'
+      : '<img src="img/question_mark_icon.png" class="correctness_icon" alt="question mark icon">';
 
-    // Provide feedback
-    feedbackText.innerHTML = feedbackMessage;  // Set the dynamic feedback for the selected image
+    feedbackText.innerHTML = feedbackMessage;
     feedbackPane.classList.add("fade");
 
     if (!feedbackContainer.classList.contains("fade")) {
       feedbackContainer.classList.add("fade");
     }
   }, 200);
-
 }
 
-// Close the overlay and popup when the overlay is clicked
-overlay.addEventListener('click', function (event) {
-  if (event.target === overlay) { // Close only if clicking outside the popup
-    overlay.style.display = 'none';
-  }
+// Navigation
+nextButton.addEventListener('click', () => {
+  feedbackContainer.classList.remove("fade");
+  currentSetIndex++;
+  if (currentSetIndex < imageSets.length) loadImageSet(currentSetIndex);
 });
 
-// Initially load the first set of images
+backButton.addEventListener('click', () => {
+  currentSetIndex--;
+  if (currentSetIndex >= 0) loadImageSet(currentSetIndex);
+});
+
+// Overlay close
+overlay.addEventListener('click', function (event) {
+  if (event.target === overlay) overlay.style.display = 'none';
+});
+
+//Load first set of images initially
 loadImageSet(currentSetIndex);
