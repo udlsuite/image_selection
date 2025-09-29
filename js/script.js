@@ -23,6 +23,7 @@ const imageSets = [
     ['img/18.jpg', false, "<b>Try again.</b><br> This image lacks aspects of diversity, including age, racial and cultural diversity.", "Option B", "A group of construction workers poses in front of a building under construction, wearing hard hats and safety vests."],
     ['img/19.jpg', true, "<b>Well done.</b><br> This image shows age, gender, and racial diversity in the construction industry.", "Option C", "Two men and a woman in hard hats and vests, gathered around a construction site, reviewing a large safety plan together."],
   ],
+<<<<<<< HEAD
     [
     ['img/20.jpg', false, "<b>Try again.</b><br>This image lacks diversity and <b>does not</b> represent an inclusive education environment.", "Option A", "A diverse group of people engaged in a discussion in a classroom setting, seated at desks with learning materials."],
     ['img/21.jpg', false, "<b>Try again.</b><br>This image lacks diversity and <b>does not</b> represent an inclusive education environment.","Option B", "A woman stands in front of a classroom, with some students seated at desks behind her."],
@@ -46,12 +47,38 @@ let currentSetIndex = 0; // Set initial page load to first set of images
 //Variables
 const container = document.getElementById('image_container');
 const nextButton = document.getElementById('next-button');
+=======
+  [
+    ['img/20.jpg', false, "<b>Try again.</b><br>This image lacks diversity and <b>does not</b> represent an inclusive education environment.", "Option A", "A diverse group of people engaged in a discussion in a classroom setting, seated at desks with learning materials."],
+    ['img/21.jpg', false, "<b>Try again.</b><br>This image lacks diversity and <b>does not</b> represent an inclusive education environment.", "Option B", "A woman stands in front of a classroom, with some students seated at desks behind her."],
+    ['img/24.jpg', true, "<b>Well done.</b><br>This image represents multiple aspects of diversity, including age, gender and race.", "Option C", "A female teacher stands in front of a classroom, with some students seated at desks behind her."],
+    ['img/23.jpg', false, "<b>Try again.</b><br> While this image shows gender diversity, there is little representation of other diversities.", "Option D", "A diverse group of individuals sitting at desks in a classroom."],
+  ],
+];
+
+const instructTexts = [
+  "Out of these four images, select the image that best represents diversity in a business environment.",
+  "You're teaching a course in a construction industry field where women are underrepresented. Which image would best challenge gender stereotypes?",
+  "Which of these images would you <b>avoid</b> using from a diversity perspective?",
+  "Out of these three images, select the image that best represents diversity in the construction industry.",
+  "The four following images were generated using AI, with the prompt 'A teacher standing in a classroom full of students'. Select the image that best represents diversity in a learning environment."];
+
+const overallCorrectness = []; // populated based on selections for each set { id: "img_set_1_img_3", isCorrect: false, feedback: "..." }
+
+let currentSetIndex = 0; // Start on the first set of images
+
+// Variables
+const container = document.getElementById('image_container');
+const nextButton = document.getElementById('next-button');
+const backButton = document.getElementById('back-button');
+>>>>>>> master
 const correctness = document.querySelector('.correct_or_incorrect');
 const feedbackText = document.querySelector('.extra_feedback');
 const feedbackPane = document.querySelector(".feedback_pane");
 const feedbackContainer = document.querySelector(".feedback_container");
 const closePopup = document.querySelector('.close_popup');
 const instructText = document.querySelector('.instruction_text');
+<<<<<<< HEAD
 let feedback;
 
 function loadImageSet(setIndex) {
@@ -91,11 +118,51 @@ function loadImageSet(setIndex) {
     p.textContent = imageData[3]; // Set the text from the array (e.g., "Option A")
 
     // Create enlarge icon image
+=======
+const overlay = document.getElementById('overlay');
+const popupImage = document.querySelector('.popup');
+
+function loadImageSet(setIndex) {
+  const images = imageSets[setIndex];
+  console.log("Loading set:", currentSetIndex);
+
+  // Clear container
+  container.innerHTML = '';
+
+  images.forEach((imageData, index) => {
+    const imageWrapper = document.createElement('div');
+    imageWrapper.classList.add('image-wrapper');
+
+    instructText.innerHTML = instructTexts[setIndex];
+
+    const img = document.createElement('img');
+    img.src = imageData[0];
+    img.alt = `Image ${index + 1}`;
+    img.title = `Image ${index + 1}`;
+    img.classList.add('image-box');
+    img.id = `img_set_${setIndex + 1}_img_${index + 1}`;
+    img.setAttribute('tabindex', '0');
+
+    // Click / keyboard handlers
+    img.addEventListener('click', () => checkAnswer(imageData[1], img, imageData[2]));
+    img.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') checkAnswer(imageData[1], img, imageData[2]);
+    });
+
+    // Caption
+    const captionDiv = document.createElement('div');
+    captionDiv.classList.add('caption');
+    const p = document.createElement('p');
+    p.textContent = imageData[3];
+
+    // Enlarge icon
+>>>>>>> master
     const enlargeIcon = document.createElement('img');
     enlargeIcon.src = 'img/enlarge-icon-64px-1.png';
     enlargeIcon.alt = 'Enlarge Image';
     enlargeIcon.classList.add('img_enlarge');
     enlargeIcon.setAttribute('tabindex', '0');
+<<<<<<< HEAD
 
     // Append elements
     captionDiv.appendChild(p);
@@ -109,6 +176,17 @@ function loadImageSet(setIndex) {
     const overlay = document.getElementById('overlay');
     const popupImage = document.querySelector('.popup');
 
+=======
+    enlargeIcon.title = "Enlarge image";
+
+    captionDiv.appendChild(p);
+    captionDiv.appendChild(enlargeIcon);
+    imageWrapper.appendChild(img);
+    imageWrapper.appendChild(captionDiv);
+    container.appendChild(imageWrapper);
+
+    // Enlarge handlers
+>>>>>>> master
     function handleImageEnlarge(event) {
       if (event.type === 'click' || event.key === 'Enter' || event.key === ' ') {
         const imgToEnlarge = event.currentTarget.closest('.image-wrapper').querySelector('img').src;
@@ -122,6 +200,7 @@ function loadImageSet(setIndex) {
       }
     }
 
+<<<<<<< HEAD
     imageWrappers.forEach(wrapper => {
       const enlargeIcon = wrapper.querySelector('.img_enlarge');
       enlargeIcon.addEventListener('click', handleImageEnlarge);
@@ -129,12 +208,18 @@ function loadImageSet(setIndex) {
     });
 
     // Close the overlay and popup when the overlay is clicked
+=======
+    enlargeIcon.addEventListener('click', handleImageEnlarge);
+    enlargeIcon.addEventListener('keydown', handleImageEnlarge);
+
+>>>>>>> master
     closePopup.addEventListener('click', function () {
       overlay.style.display = 'none';
       img.setAttribute('tabindex', '0');
       enlargeIcon.setAttribute('tabindex', '0');
     });
   });
+<<<<<<< HEAD
 }
 
 // Show the "Next" button after each set in answered, unless its the last set
@@ -190,12 +275,61 @@ function checkAnswer(isCorrect, selectedImg, feedbackMessage) {
 
     // Provide feedback
     feedbackText.innerHTML = feedbackMessage;  // Set the dynamic feedback for the selected image
+=======
+
+  // Back button visibility
+  backButton.disabled = currentSetIndex === 0 ? true : false;
+
+  // Next button visibility
+  nextButton.disabled = currentSetIndex === imageSets.length - 1 ? true : false;
+
+  // Restore previous selection if exists
+  if (overallCorrectness[currentSetIndex]) {
+    const saved = overallCorrectness[currentSetIndex];
+    const thisQ = document.querySelector(`#${saved.id}`);
+    if (thisQ) thisQ.classList.add("selected");
+
+    feedbackText.innerHTML = saved.feedback;
+    correctness.innerHTML = saved.isCorrect
+      ? '<img src="img/trophy_icon.png" class="correctness_icon" alt="trophy icon">'
+      : '<img src="img/question_mark_icon.png" class="correctness_icon" alt="question mark icon">';
+  } else {
+    feedbackText.innerHTML = "";
+    correctness.innerHTML = "";
+  }
+}
+
+// Check answer function with correctess, selected img and feedback message as parameters 
+function checkAnswer(isCorrect, selectedImg, feedbackMessage) {
+    console.log(overallCorrectness)
+  const imgs = document.querySelectorAll('.image-box');
+  imgs.forEach(img => img.classList.remove('selected'));
+
+  // Save selection wether correct or not 
+  overallCorrectness[currentSetIndex] = {
+    id: selectedImg.id,
+    isCorrect: isCorrect,
+    feedback: feedbackMessage
+  };
+
+  selectedImg.classList.add('selected');
+
+  // Feedback
+  feedbackPane.classList.remove("fade");
+  setTimeout(() => {
+    correctness.innerHTML = isCorrect
+      ? '<img src="img/trophy_icon.png" class="correctness_icon" alt="trophy icon">'
+      : '<img src="img/question_mark_icon.png" class="correctness_icon" alt="question mark icon">';
+
+    feedbackText.innerHTML = feedbackMessage;
+>>>>>>> master
     feedbackPane.classList.add("fade");
 
     if (!feedbackContainer.classList.contains("fade")) {
       feedbackContainer.classList.add("fade");
     }
   }, 200);
+<<<<<<< HEAD
 
 }
 
@@ -208,3 +342,30 @@ overlay.addEventListener('click', function (event) {
 
 // Initially load the first set of images
 loadImageSet(currentSetIndex);
+=======
+}
+
+// Navigation
+nextButton.addEventListener('click', () => {
+  feedbackContainer.classList.remove("fade");
+  currentSetIndex++;
+  if (currentSetIndex < imageSets.length) loadImageSet(currentSetIndex);
+});
+
+<<<<<<< HEAD
+backButton.addEventListener('click', () => {
+  currentSetIndex--;
+  if (currentSetIndex >= 0) loadImageSet(currentSetIndex);
+});
+
+// Overlay close
+overlay.addEventListener('click', function (event) {
+  if (event.target === overlay) overlay.style.display = 'none';
+});
+
+//Load first set of images initially
+=======
+// Initially load the first set of images
+>>>>>>> 7b5b031db881206ac05f4e6e04f660d495af2f9d
+loadImageSet(currentSetIndex);
+>>>>>>> master
