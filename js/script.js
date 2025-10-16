@@ -138,6 +138,8 @@ function loadImageSet(setIndex) {
     const thisQ = document.querySelector(`#${saved.id}`);
     if (thisQ) thisQ.classList.add("selected");
 
+    feedbackContainer.classList.add("fade");
+
     feedbackText.innerHTML = saved.feedback;
     correctness.innerHTML = saved.isCorrect
       ? '<img src="img/trophy_icon.png" class="correctness_icon" alt="trophy icon">'
@@ -198,6 +200,13 @@ nextButton.addEventListener('click', () => {
   currentSetIndex++;
   if (currentSetIndex < imageSets.length) loadImageSet(currentSetIndex);
 });
+
+backButton.addEventListener('click', () => {
+  currentSetIndex--;
+  if (currentSetIndex >= 0) loadImageSet(currentSetIndex);
+  // checkAnswer();
+});
+
 
 // Initially load the first set of images
 loadImageSet(currentSetIndex);
